@@ -5,7 +5,6 @@ defmodule EnsembleTest do
   import Phoenix.LiveViewTest
 
   defmodule Example do
-    # use Phoenix.Component
     use Phoenix.LiveView
 
     def render(_assigns) do
@@ -38,6 +37,7 @@ defmodule EnsembleTest do
           <label>Email <input type="email"></label>
           <button type="button" aria-label="More info"><icon-info></icon-info></button>
           <button type="submit">Subscribe</button>
+          <output>You are now subscribed!</output>
         </form>
       </body>
       """
@@ -90,12 +90,23 @@ defmodule EnsembleTest do
     assert view |> Ensemble.role(:link, text_filter: "Home") |> render() ==
              ~S|<a href="/">Home</a>|
 
+    refute view |> Ensemble.role(:link, "Legal")
+
     assert view |> Ensemble.role(:img, "Really funny gif") |> render() ==
              ~S|<img alt="Really funny gif"/>|
 
     assert view |> Ensemble.role(:form, "Sign Up") |> render() =~ ~r|^<form|
 
     assert view |> Ensemble.has_role?(:textbox)
+    assert view |> Ensemble.has_role?(:textbox, "Username")
+    assert view |> Ensemble.has_role?(:textbox, "Email")
+    refute view |> Ensemble.has_role?(:textbox, "Foo")
+    assert view |> Ensemble.role(:textbox, "Username") |> render() == ~S|<input/>|
+    assert view |> Ensemble.role(:textbox, "Email") |> render() =~ ~r|^<input type="email"|
+    refute view |> Ensemble.role(:textbox, "Foo")
+
+    assert view |> Ensemble.role(:checkbox, "Send newsletter")
+    assert view |> Ensemble.has_role?(:status)
 
     assert view |> Ensemble.role(:button, text_filter: "Create Account") |> render() ==
              ~S|<button>Create Account</button>|
