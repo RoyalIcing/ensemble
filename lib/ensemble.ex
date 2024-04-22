@@ -1,6 +1,14 @@
 defmodule Ensemble do
   @moduledoc """
   Test LiveView with ARIA roles.
+
+  If you are new to the concepts of accessible names or roles I recommend reading W3C’s guides:
+
+  - [Landmark roles](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/)
+  - [Structual content roles](https://www.w3.org/WAI/ARIA/apg/practices/structural-roles/)
+  - [Accessible names](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/)
+
+  Note: Ensemble has only a partial implementation of the accessible name algorithm, specifically it supports `aria-label` and descendant content but does not yet support `aria-labelledby` due to the constraints of selectors.
   """
 
   @doc """
