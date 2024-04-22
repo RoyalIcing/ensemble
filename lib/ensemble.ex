@@ -1,56 +1,57 @@
 defmodule Ensemble do
   @moduledoc """
-  Documentation for `Ensemble`.
+  Test LiveView with ARIA roles.
   """
-
-  # See https://github.com/A11yance/aria-query/blob/main/src/etc/roles/literal/gridcellRole.js
-
-  @roles_to_selectors %{
-    link: ~S|a[href]:not([href=""])|,
-    main: ~S|main|,
-    navigation: ~S|nav|,
-    banner: ~S|body > header, header[role="banner"]|,
-    contentinfo: ~S|body > footer, footer[role="contentinfo"]|,
-    article: ~S|article|,
-    region: ~S|section[aria-label], section[aria-labelledby]|,
-    heading: ~S|h1, h2, h3, h4, h5, h6|,
-    list: ~S|ul, ol|,
-    listitem: ~S|ul > li, ol > li|,
-    group: ~S|details, fieldset, optgroup, address|,
-    figure: ~S|figure|,
-    img: ~S|img:not([alt]), img:not([alt=""])|,
-    presentation: ~S|img[alt=""]|,
-    term: ~S|dt, dfn|,
-    definition: ~S|dd|,
-    table: ~S|table|,
-    rowgroup: ~S|thead, tbody, tfoot|,
-    row: ~S|tr|,
-    cell: ~S|td|,
-    button:
-      ~S|button, input[type="button"], input[type="image"], input[type="reset"], input[type="submit"]|,
-    status: ~S|output|,
-    dialog: ~S|dialog|,
-    form: ~S|form[aria-label], form[aria-labelledby]|,
-    radio: ~S|input[type="radio"]|,
-    option: ~S|option|,
-    listbox: ~S|select:not([size="0"]):not([size="1"]), select[multiple]|,
-    textbox:
-      ~S|textarea, input:not([type]), | <>
-        Enum.map_join(~w(text email tel url), fn type ->
-          ~s|input[type="#{type}"]:not([list])|
-        end),
-    search: ~S|search, form[role="search"]|,
-    searchbox: ~S|input[type="search"]:not([list])|
-  }
 
   @doc """
   Lookup the selector for an ARIA role.
   """
-  def selector_for_role(role)
+  def role(view, role, opts_or_accessible_name \\ [])
 
-  for {role, selector} <- @roles_to_selectors do
-    def selector_for_role(unquote(role)) do
-      unquote(selector)
-    end
+  def role(view, role, accessible_name) when is_atom(role) and is_binary(accessible_name) do
+    selectors = Ensemble.Roles.selectors_for_role_named(role, accessible_name)
+
+    selectors
+    |> Enum.find_value(fn
+      selector when is_binary(selector) ->
+        if Phoenix.LiveViewTest.has_element?(view, selector) do
+          Phoenix.LiveViewTest.element(view, selector)
+        end
+
+      {selector, text_content} when is_binary(selector) and is_binary(text_content) ->
+        if Phoenix.LiveViewTest.has_element?(view, selector, text_content) do
+          Phoenix.LiveViewTest.element(view, selector, text_content)
+        end
+    end)
+  end
+
+  def role(view, role, opts) when is_atom(role) and is_list(opts) do
+    selector = Ensemble.Roles.selector_for_role(role)
+    text_filter = opts[:text_filter]
+    Phoenix.LiveViewTest.element(view, selector, text_filter)
+  end
+
+  @doc """
+  Checks if the given element with `role` exists on the page.
+  """
+  def has_role?(view, role, opts_or_accessible_name \\ [])
+
+  def has_role?(view, role, accessible_name) when is_atom(role) and is_binary(accessible_name) do
+    selectors = Ensemble.Roles.selectors_for_role_named(role, accessible_name)
+
+    selectors
+    |> Enum.any?(fn
+      selector when is_binary(selector) ->
+        Phoenix.LiveViewTest.has_element?(view, selector)
+
+      {selector, text_content} when is_binary(selector) and is_binary(text_content) ->
+        Phoenix.LiveViewTest.has_element?(view, selector, text_content)
+    end)
+  end
+
+  def has_role?(view, role, opts) when is_atom(role) and is_list(opts) do
+    selector = Ensemble.Roles.selector_for_role(role)
+    text_filter = opts[:text_filter]
+    Phoenix.LiveViewTest.has_element?(view, selector, text_filter)
   end
 end
