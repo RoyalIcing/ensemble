@@ -4,7 +4,45 @@ defmodule Ensemble do
   """
 
   @doc """
-  Lookup the selector for an ARIA role.
+  Find element with a unique `role` or accessible name combo to scope a function to.
+
+  It expects the current LiveView, a role, and an [accessible name](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/#whatareaccessiblenamesanddescriptions?).
+
+  ## Examples
+
+  ```elixir
+  defmodule TodoLiveTest do
+    use YourAppWeb.ConnCase, async: true
+
+    import Phoenix.LiveViewTest
+    import Ensemble
+
+    test "has landmarks and nav", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/todos")
+
+      assert view |> role(:banner) |> render() =~ ~r|^<header|
+      assert view |> role(:main) |> render() =~ ~r|^<main|
+      assert view |> role(:contentinfo) |> render() =~ ~r|^<footer|
+
+      assert view |> role(:navigation, "Primary") =~ ~r|^<nav|
+      assert view |> role(:link, "Home") =~ ~r|^<a href="/"|
+
+    end
+
+    test "subscribe form", %{conn: conn} do
+      assert view |> role(:form) =~ ~r|^<form|
+      assert view |> role(:textbox, "Email") =~ ~r|^<input type="text"|
+      assert view |> role(:checkbox, "Send newsletter") =~ ~r|^<input type="checkbox"|
+      assert view |> role(:button, "Subscribe") =~ ~r|^<button type="submit"|
+    end
+
+    test "submit form", %{conn: conn} do
+      assert view
+             |> role(:button, "Subscribe")
+             |> render_click() =~ "Thanks for subscribing!"
+    end
+  end
+  ```
   """
   def role(view, role, opts_or_accessible_name \\ [])
 
@@ -32,7 +70,28 @@ defmodule Ensemble do
   end
 
   @doc """
-  Checks if the given element with `role` exists on the page.
+  Checks if the given element with `role` (and optional [accessible name](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/#whatareaccessiblenamesanddescriptions?)) exists on the page.
+
+  ## Examples
+
+  ```elixir
+  defmodule TodoLiveTest do
+    use YourAppWeb.ConnCase, async: true
+
+    import Phoenix.LiveViewTest
+    import Ensemble
+
+    test "has landmarks", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/todos")
+
+      assert view |> has_role?(:banner)
+      assert view |> has_role?(:main)
+      assert view |> has_role?(:contentinfo)
+
+      assert view |> has_role?(:navigation, "Primary")
+    end
+  end
+  ```
   """
   def has_role?(view, role, opts_or_accessible_name \\ [])
 
