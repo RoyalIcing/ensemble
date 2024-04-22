@@ -43,7 +43,7 @@ defmodule TodoLiveTest do
            |> render() == ~S|<a href="/">Home</a>|
   end
 
-  test "works", %{conn: conn} do
+  test "form", %{conn: conn} do
     {:ok, view, _html} = live(conn, "/todo")
 
     assert view |> has_role?(:form, "New item")
