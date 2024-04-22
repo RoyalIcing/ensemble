@@ -51,7 +51,7 @@ defmodule Ensemble.MixProject do
   defp docs do
     [
       # The main page in the docs
-      main: "ensemble",
+      # main: "ensemble",
       # logo: "orb-logo-blue-orange.svg",
       extras: [
         "README.md"
