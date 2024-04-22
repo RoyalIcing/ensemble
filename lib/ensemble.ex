@@ -97,6 +97,8 @@ defmodule Ensemble do
       assert view |> has_role?(:contentinfo)
 
       assert view |> has_role?(:navigation, "Primary")
+
+      refute view |> has_role?(:link, "Does not exist")
     end
   end
   ```
