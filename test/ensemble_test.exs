@@ -17,17 +17,27 @@ defmodule EnsembleTest do
         <main>Hello, <%= @name %>!</main>
         <footer>Contentinfo</footer>
 
-        <nav>
+        <nav aria-label="Primary">
           <a href="/">Home</a>
           <a href="/about">About</a>
           <a href="/privacy-policy">Privacy Policy</a>
           <a>Anchor</a>
         </nav>
 
+        <img>
+        <img alt="">
+        <img alt="Really funny gif">
+
         <form aria-label="Sign Up">
           <label>Username <input></label>
           <label><input type="checkbox"> Send newsletter</label>
           <button>Create Account</button>
+        </form>
+
+        <form aria-label="Newsletter">
+          <label>Email <input type="email"></label>
+          <button type="button" aria-label="More info"><icon-info></icon-info></button>
+          <button type="submit">Subscribe</button>
         </form>
       </body>
       """
@@ -53,6 +63,13 @@ defmodule EnsembleTest do
              "<footer>Contentinfo</footer>"
 
     assert view |> Ensemble.has_role?(:navigation)
+
+    assert view |> Ensemble.role(:navigation) |> render() =~
+             ~r|^<nav|
+
+    assert view |> Ensemble.role(:navigation, "Primary") |> render() =~
+             ~r|^<nav|
+
     assert view |> Ensemble.has_role?(:link)
     assert view |> Ensemble.has_role?(:link, "Home")
     assert view |> Ensemble.has_role?(:link, "About")
@@ -73,7 +90,10 @@ defmodule EnsembleTest do
     assert view |> Ensemble.role(:link, text_filter: "Home") |> render() ==
              ~S|<a href="/">Home</a>|
 
-    assert view |> Ensemble.role(:form) |> render() =~ ~r|^<form|
+    assert view |> Ensemble.role(:img, "Really funny gif") |> render() ==
+             ~S|<img alt="Really funny gif"/>|
+
+    assert view |> Ensemble.role(:form, "Sign Up") |> render() =~ ~r|^<form|
 
     assert view |> Ensemble.has_role?(:textbox)
 
@@ -82,6 +102,12 @@ defmodule EnsembleTest do
 
     assert view |> Ensemble.role(:button, "Create Account") |> render() ==
              ~S|<button>Create Account</button>|
+
+    assert view |> Ensemble.role(:button, "More info") |> render() ==
+             ~S|<button type="button" aria-label="More info"><icon-info></icon-info></button>|
+
+    assert view |> Ensemble.role(:button, "Subscribe") |> render() ==
+             ~S|<button type="submit">Subscribe</button>|
   end
 end
 

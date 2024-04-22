@@ -30,7 +30,8 @@ defmodule Ensemble.Roles do
       ~w|button input[type="button"] input[type="image"] input[type="reset"] input[type="submit"]|,
     status: ~w|output|,
     dialog: ~w|dialog|,
-    form: ~w|form[aria-label] form[aria-labelledby]|,
+    # form: ~w|form[aria-label] form[aria-labelledby]|,
+    form: ~w|form|,
     radio: ~w|input[type="radio"]|,
     checkbox: ~w|input[type="checkbox"]|,
     option: ~w|option|,
@@ -79,6 +80,16 @@ defmodule Ensemble.Roles do
           ]
         end
       )
+    end
+  end
+
+  for role <- Map.keys(@roles_to_selectors) -- @roles_named_by_content, role not in [:img] do
+    def selectors_for_role_named(unquote(role), accessible_name) do
+      base_selectors = unquote(List.wrap(@roles_to_selectors[role]))
+
+      for sel <- base_selectors do
+        ~s|#{sel}[aria-label="#{escape_double_quotes(accessible_name)}"]|
+      end
     end
   end
 
