@@ -28,7 +28,7 @@ defmodule TodoLiveTest do
   import Ensemble
 
   test "has navigation", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/todo")
+    {:ok, view, _html} = live(conn, "/todos")
 
     assert view |> has_role?(:banner)
     assert view |> has_role?(:contentinfo)
@@ -46,7 +46,7 @@ defmodule TodoLiveTest do
   end
 
   test "form", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/todo")
+    {:ok, view, _html} = live(conn, "/todos")
 
     assert view |> has_role?(:form, "New item")
     assert view |> has_role?(:textbox, "Description")
