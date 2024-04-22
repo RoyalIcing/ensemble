@@ -78,7 +78,7 @@ defmodule Ensemble do
   end
 
   @doc """
-  Checks if the given element with `role` (and optional [accessible name](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/#whatareaccessiblenamesanddescriptions?)) exists on the page.
+  Checks if the given element with `role` (and optional [accessible name](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/#whatareaccessiblenamesanddescriptions?)) exists within `view`.
 
   ## Examples
 
