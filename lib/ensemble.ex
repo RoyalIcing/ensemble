@@ -34,7 +34,6 @@ defmodule Ensemble do
 
       assert view |> role(:navigation, "Primary") =~ ~r|^<nav|
       assert view |> role(:link, "Home") =~ ~r|^<a href="/"|
-
     end
 
     test "subscribe form", %{conn: conn} do
