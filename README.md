@@ -1,6 +1,8 @@
 # Ensemble
 
-An all-star cast of ARIA roles for Phoenix.[LiveViewTest](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveViewTest.html).
+[Docs](https://hexdocs.pm/ensemble/)
+
+An all-star cast of ARIA roles for Phoenix [LiveViewTest](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveViewTest.html).
 
 ## Installation
 
