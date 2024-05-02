@@ -7,9 +7,12 @@ defmodule EnsembleTest do
   defmodule Example do
     use Phoenix.LiveView
 
-    def render(_assigns) do
-      assigns = %{name: "Mary"}
+    def mount(_params, _session, socket) do
+      socket = assign(socket, count: 1, name: "Mary")
+      {:ok, socket}
+    end
 
+    def render(assigns) do
       ~H"""
       <body>
         <header>Banner</header>
@@ -26,6 +29,11 @@ defmodule EnsembleTest do
         <img>
         <img alt="">
         <img alt="Really funny gif">
+
+        <form aria-label="Counter">
+          <label>Count: <output><%= @count %></output></label>
+          <button phx-click="increment">Increment</button>
+        </form>
 
         <form aria-label="Sign Up">
           <label>Username <input></label>
@@ -46,6 +54,11 @@ defmodule EnsembleTest do
         </form>
       </body>
       """
+    end
+
+    def handle_event("increment", _, socket) do
+      socket = socket |> update(:count, &(&1 + 1))
+      {:noreply, socket}
     end
   end
 
@@ -133,6 +146,18 @@ defmodule EnsembleTest do
              ~S|<button type="submit">Subscribe</button>|
 
     assert view |> Ensemble.has_role?(:status)
+    assert view |> Ensemble.has_role?(:status, "Count")
+
+    assert view |> Ensemble.role(:status, "Count") |> render() ==
+             ~S|<output>1</output>|
+
+    assert view |> Ensemble.role(:button, "Increment") |> render_click() =~
+             ~S|<output>2</output>|
+
+    assert view |> Ensemble.role(:status, "Count") |> render() ==
+             ~S|<output>2</output>|
+
+    view |> render() =~ ~S|<output>2</output>|
   end
 end
 
