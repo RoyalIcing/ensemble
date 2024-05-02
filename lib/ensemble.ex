@@ -2,7 +2,7 @@ defmodule Ensemble do
   @moduledoc """
   Test LiveView with ARIA roles.
 
-  If you are new to the concepts of accessible names or roles I recommend reading W3C’s guides:
+  If you are new to the concepts of ARIA roles or accessible names I recommend reading W3C’s guides:
 
   - [Landmark roles](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/)
   - [Structual content roles](https://www.w3.org/WAI/ARIA/apg/practices/structural-roles/)
