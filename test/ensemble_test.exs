@@ -29,13 +29,18 @@ defmodule EnsembleTest do
 
         <form aria-label="Sign Up">
           <label>Username <input></label>
-          <label><input type="checkbox"> Send newsletter</label>
+          <fieldset>
+            <legend>Theme</legend>
+            <label><input type="radio" name="theme" value="scarlet"> Scarlet</label>
+            <label><input type="radio" name="theme" value="violet"> Violet</label>
+          </fieldset>
           <button>Create Account</button>
         </form>
 
         <form aria-label="Newsletter">
           <label>Email <input type="email"></label>
           <button type="button" aria-label="More info"><icon-info></icon-info></button>
+          <label><input type="checkbox"> Send me daily updates</label>
           <button type="submit">Subscribe</button>
           <output>You are now subscribed!</output>
         </form>
@@ -105,8 +110,13 @@ defmodule EnsembleTest do
     assert view |> Ensemble.role(:textbox, "Email") |> render() =~ ~r|^<input type="email"|
     refute view |> Ensemble.role(:textbox, "Foo")
 
-    assert view |> Ensemble.role(:checkbox, "Send newsletter")
-    assert view |> Ensemble.has_role?(:status)
+    # assert view |> Ensemble.has_role?(:group, "Theme")
+
+    assert view |> Ensemble.has_role?(:radio, "Scarlet")
+    assert view |> Ensemble.has_role?(:radio, "Violet")
+
+    assert view |> Ensemble.role(:radio, "Violet") |> render() =~
+             ~r|^<input type="radio" name="theme" value="violet"|
 
     assert view |> Ensemble.role(:button, text_filter: "Create Account") |> render() ==
              ~S|<button>Create Account</button>|
@@ -117,8 +127,12 @@ defmodule EnsembleTest do
     assert view |> Ensemble.role(:button, "More info") |> render() ==
              ~S|<button type="button" aria-label="More info"><icon-info></icon-info></button>|
 
+    assert view |> Ensemble.role(:checkbox, "Send me daily updates")
+
     assert view |> Ensemble.role(:button, "Subscribe") |> render() ==
              ~S|<button type="submit">Subscribe</button>|
+
+    assert view |> Ensemble.has_role?(:status)
   end
 end
 

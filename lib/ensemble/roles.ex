@@ -68,7 +68,7 @@ defmodule Ensemble.Roles do
     [~s|img[alt="#{escape_double_quotes(accessible_name)}"]|]
   end
 
-  for role <- ~w(textbox checkbox)a do
+  for role <- ~w(textbox checkbox radio)a do
     def selectors_for_role_named(unquote(role), accessible_name) do
       for sel <- unquote(@roles_to_selectors[role]) do
         ~s|label:fl-contains("#{escape_double_quotes(accessible_name)}") #{sel}|
@@ -76,7 +76,13 @@ defmodule Ensemble.Roles do
     end
   end
 
-  for role <- @roles_named_by_content -- ~w(checkbox)a do
+  # for role <- ~w(group)a do
+  #   def selectors_for_role_named(unquote(role), accessible_name) do
+  #     [~s|fieldset:has(legend:fl-contains("#{escape_double_quotes(accessible_name)}"))|]
+  #   end
+  # end
+
+  for role <- @roles_named_by_content -- ~w(checkbox radio)a do
     def selectors_for_role_named(unquote(role), accessible_name) do
       base_selectors = unquote(List.wrap(@roles_to_selectors[role]))
 
@@ -92,7 +98,7 @@ defmodule Ensemble.Roles do
   end
 
   for role <- Map.keys(@roles_to_selectors) -- @roles_named_by_content,
-      role not in ~w(img textbox checkbox)a do
+      role not in ~w(img textbox)a do
     def selectors_for_role_named(unquote(role), accessible_name) do
       base_selectors = unquote(List.wrap(@roles_to_selectors[role]))
 
